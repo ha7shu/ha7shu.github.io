@@ -1,8 +1,7 @@
 # Harsh Sharma
 
-Hi, I'm Harsh. This is the code behind my personal website.
+This is the code behind my personal website.
 
-**Live site: [ha7shu.github.io](https://ha7shu.github.io)**
 
 ## What's on it
 
@@ -11,7 +10,6 @@ Hi, I'm Harsh. This is the code behind my personal website.
 - A tiny piano that plays soft notes (turn your sound on)
 - A rep counter for the days I'm feeling active
 
-It's a single `index.html` file: plain HTML, CSS and JavaScript, no frameworks and no build step. To see it locally, just open the file in a browser.
 
 ## Get in touch
 
