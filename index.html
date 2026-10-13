@@ -21,12 +21,13 @@
   color-scheme: light;
   --bg: #e3e8f0; --ink: #1b2240; --muted: #566080; --accent: #3d4fe0; --accent-ink: #ffffff;
   --sd: #a7b3c9; --sl: #ffffff; --track: rgba(100,115,150,.3); --edge: rgba(100,115,150,.28); --warn: #b13a09;
-  --raise-xl: 18px 18px 40px var(--sd), -18px -18px 40px var(--sl);
-  --raise-lg: 12px 12px 28px var(--sd), -12px -12px 28px var(--sl);
-  --raise: 7px 7px 16px var(--sd), -7px -7px 16px var(--sl);
-  --raise-sm: 4px 4px 9px var(--sd), -4px -4px 9px var(--sl);
-  --inset-lg: inset 10px 10px 24px var(--sd), inset -10px -10px 24px var(--sl);
-  --inset: inset 5px 5px 11px var(--sd), inset -5px -5px 11px var(--sl);
+  /* blur radius is what costs paint time, so these are kept moderate */
+  --raise-xl: 12px 12px 26px var(--sd), -12px -12px 26px var(--sl);
+  --raise-lg: 9px 9px 20px var(--sd), -9px -9px 20px var(--sl);
+  --raise: 6px 6px 13px var(--sd), -6px -6px 13px var(--sl);
+  --raise-sm: 4px 4px 8px var(--sd), -4px -4px 8px var(--sl);
+  --inset-lg: inset 8px 8px 18px var(--sd), inset -8px -8px 18px var(--sl);
+  --inset: inset 5px 5px 10px var(--sd), inset -5px -5px 10px var(--sl);
   --inset-sm: inset 3px 3px 7px var(--sd), inset -3px -3px 7px var(--sl);
   --display: "Outfit", "Avenir Next", "Segoe UI", sans-serif;
   --body: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -53,12 +54,12 @@
   --bg: #1c2030; --ink: #e9ecf8; --muted: #9ba3c2; --accent: #8d9cff; --accent-ink: #141833;
   --sd: #0e1120; --sl: #2c3249; --track: rgba(160,170,210,.28); --edge: rgba(160,170,210,.22); --warn: #ff9a6c;
 }
-/* Cheaper shadows on small or touch screens: blur radius is what costs paint time */
+/* Cheaper shadows on small or touch screens */
 @media (max-width: 48rem), (pointer: coarse) {
   :root {
     --raise-xl: 10px 10px 22px var(--sd), -10px -10px 22px var(--sl);
-    --raise-lg: 8px 8px 18px var(--sd), -8px -8px 18px var(--sl);
-    --raise: 5px 5px 11px var(--sd), -5px -5px 11px var(--sl);
+    --raise-lg: 8px 8px 16px var(--sd), -8px -8px 16px var(--sl);
+    --raise: 5px 5px 10px var(--sd), -5px -5px 10px var(--sl);
     --raise-sm: 3px 3px 6px var(--sd), -3px -3px 6px var(--sl);
     --inset-lg: inset 6px 6px 14px var(--sd), inset -6px -6px 14px var(--sl);
     --inset: inset 4px 4px 8px var(--sd), inset -4px -4px 8px var(--sl);
@@ -238,6 +239,7 @@ h2 { margin: 0; font: 500 var(--fs-h2)/1.1 var(--display); letter-spacing: -.03e
 .react[data-state="wait"] { box-shadow: var(--inset); background: rgba(255, 122, 69, .22); background: color-mix(in srgb, #ff7a45 22%, var(--bg)); }
 .react[data-state="wait"] .small { color: var(--ink); }
 .react[data-state="early"] .big { color: var(--warn); }
+.react[data-state="done"] .big { color: var(--accent); }
 .react[data-state="go"] { background: #17c28a; color: #04281b; }
 .react[data-state="go"] .small { color: #04281b; }
 
@@ -256,7 +258,7 @@ h2 { margin: 0; font: 500 var(--fs-h2)/1.1 var(--display); letter-spacing: -.03e
 .totop:active { box-shadow: var(--inset); }
 .totop .pr { position: absolute; inset: .3rem; width: calc(100% - .6rem); height: calc(100% - .6rem); }
 .totop .pt { fill: none; stroke: var(--track); stroke-width: 3; }
-.totop .pb { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset .2s linear; }
+.totop .pb { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; }
 .totop .pc { position: relative; display: grid; place-items: center; line-height: 1; gap: .12rem; }
 .totop .pc .ic { width: .95rem; height: .95rem; stroke-width: 2.2; }
 .totop b { font: 600 .68rem var(--display); font-variant-numeric: tabular-nums; }
@@ -264,7 +266,7 @@ h2 { margin: 0; font: 500 var(--fs-h2)/1.1 var(--display); letter-spacing: -.03e
 @media (hover: hover) {
   .card:hover { transform: translateY(-3px); }
   .card:hover::after { opacity: 1; }
-  .pill:hover { color: var(--accent); transform: translateY(-2px); }
+  .pill:not(:disabled):hover { color: var(--accent); transform: translateY(-2px); }
 }
 
 /* Theme switch: circular reveal via View Transitions (JS drives the clip-path), cross-fade fallback */
@@ -278,7 +280,7 @@ html.vt *, html.vt *::before, html.vt *::after { transition: none !important; }
 /* Scroll reveals */
 @media (prefers-reduced-motion: no-preference) {
   .js .reveal { opacity: 0; transform: translateY(22px);
-    transition: opacity .8s ease var(--d, 0s), transform .9s var(--ease) var(--d, 0s), background .4s ease, box-shadow .4s ease; }
+    transition: opacity .8s ease var(--d, 0s), transform .9s var(--ease) var(--d, 0s), background .4s ease; }
   .js .reveal.in { opacity: 1; transform: none; }
   .js .split .wi { transform: translateY(112%); transition: transform 1s var(--ease) calc(var(--i, 0) * 80ms); }
   .js .split.in .wi { transform: none; }
@@ -583,13 +585,25 @@ footer { color: var(--muted); font-size: .875rem; padding-top: 1rem; }
   }
 
   /* ---------- Motion engine: one rAF loop that only runs while something is moving.
-     Scroll parallax is done in CSS (scroll timelines) where supported; this loop is the fallback. ---------- */
+     Scroll parallax is done in CSS (scroll timelines) where supported; this loop is the fallback.
+     The headline weight effect reads NO layout per frame: letter centres are cached in measure(). ---------- */
   if (!calm) {
     var deco = document.querySelector(".deco"), copy = document.querySelector(".copy"), curEl = $("cursor");
     var M = { cx: 0, cy: 0, tx: 0, ty: 0, dx: 0, dy: 0, dtx: 0, dty: 0, sc: window.scrollY, stg: window.scrollY, px: 0, py: 0,
-              inside: false, seen: false, run: false, intro: false, R: 200 };
+              inside: false, seen: false, run: false, intro: false, big: false, R: 200 };
+    var rects = [];
     var kick = function () { if (!M.run) { M.run = true; requestAnimationFrame(frame); } };
-    var measure = function () { M.R = parseFloat(getComputedStyle(h1).fontSize) * 1.1; };
+    // how far the hero copy has been pushed down by its scroll parallax at scroll position s
+    var par = function (s) { return 0.12 * Math.min(s, window.innerHeight * 0.8); };
+    var measure = function () {
+      M.R = parseFloat(getComputedStyle(h1).fontSize) * 1.1;
+      if (!M.intro) return;   // letters are still animating in, positions would be wrong
+      var sy = window.scrollY, off = par(sy);
+      rects = letters.map(function (l) {
+        var b = l.getBoundingClientRect();
+        return { x: b.left + b.width / 2, y: b.top + sy - off + b.height / 2 };
+      });
+    };
 
     var frame = function () {
       M.run = false;
@@ -613,23 +627,20 @@ footer { color: var(--muted); font-size: .875rem; padding-top: 1rem; }
         if (Math.abs(M.tx - M.cx) > 0.2 || Math.abs(M.ty - M.cy) > 0.2) busy = true;
         curEl.style.transform = "translate3d(" + M.cx.toFixed(1) + "px," + M.cy.toFixed(1) + "px,0)";
 
-        // headline weight: letters near the pointer get heavier (all reads first, then all writes)
-        if (M.intro && letters.length) {
-          var r = h1.getBoundingClientRect();
-          var near = M.inside && M.px > r.left - M.R && M.px < r.right + M.R && M.py > r.top - M.R && M.py < r.bottom + M.R;
-          var tg = [], i;
-          for (i = 0; i < letters.length; i++) {
-            if (near) {
-              var b = letters[i].getBoundingClientRect();
-              var d = Math.hypot(M.px - (b.left + b.width / 2), M.py - (b.top + b.height / 2));
+        // headline weight: letters near the pointer get heavier (pure math on cached positions, no DOM reads)
+        if (M.intro && rects.length === letters.length) {
+          var sy = window.scrollY, off = par(sy);
+          var act = M.inside && sy < window.innerHeight;
+          for (var i = 0; i < letters.length; i++) {
+            var tg = BASE;
+            if (act) {
+              var d = Math.hypot(M.px - rects[i].x, M.py - (rects[i].y - sy + off));
               var k = Math.max(0, 1 - d / M.R);
-              tg.push(BASE + (PEAK - BASE) * k * k * (3 - 2 * k));
-            } else tg.push(BASE);
-          }
-          for (i = 0; i < letters.length; i++) {
-            lw[i] += (tg[i] - lw[i]) * 0.14;
-            if (Math.abs(tg[i] - lw[i]) > 0.4) busy = true; else lw[i] = tg[i];
-            var rw = Math.round(lw[i]);
+              tg = BASE + (PEAK - BASE) * k * k * (3 - 2 * k);
+            }
+            lw[i] += (tg - lw[i]) * 0.14;
+            if (Math.abs(tg - lw[i]) > 0.4) busy = true; else lw[i] = tg;
+            var rw = Math.round(lw[i] / 8) * 8;   // fewer distinct weights means fewer text reflows
             if (rw !== wr[i]) { letters[i].style.fontWeight = rw; wr[i] = rw; }
           }
         }
@@ -640,7 +651,7 @@ footer { color: var(--muted); font-size: .875rem; padding-top: 1rem; }
     // runs inside the shared scroll rAF, so the frame is drawn immediately (no extra frame of delay)
     if (!nativeScroll) onScroll(function () { M.stg = window.scrollY; if (!M.run) { M.run = true; frame(); } });
     onLayout(function () { measure(); kick(); });
-    setTimeout(function () { M.intro = true; }, 1900);
+    setTimeout(function () { M.intro = true; measure(); kick(); }, 1900);
     measure(); kick();
 
     if (fine) {
@@ -651,7 +662,8 @@ footer { color: var(--muted); font-size: .875rem; padding-top: 1rem; }
         M.tx = e.clientX; M.ty = e.clientY;
         if (!M.seen) { M.cx = M.tx; M.cy = M.ty; M.seen = true; }
         curEl.classList.add("on");
-        curEl.classList.toggle("big", !!(e.target.closest && e.target.closest("a, button")));
+        var big = !!(e.target.closest && e.target.closest("a, button"));
+        if (big !== M.big) { M.big = big; curEl.classList.toggle("big", big); }   // only touch the DOM when it changes
         kick();
       }, { passive: true });
       root.addEventListener("mouseleave", function () { curEl.classList.remove("on"); M.inside = false; kick(); });
@@ -833,6 +845,8 @@ footer { color: var(--muted); font-size: .875rem; padding-top: 1rem; }
       '<path d="M12 3.5l8.5 8.5-8.5 8.5L3.5 12z"/>'
     ];
     var pads = [], seq = [], idx = 0, mode = "idle", hiScore = 0, gen = 0;
+    var savedHi = parseInt(lsGet("simonBest"), 10);
+    if (savedHi > 0) { hiScore = savedHi; status.textContent = "Press start · best " + hiScore; }
     function flash(i, ms) { pads[i].classList.add("lit"); setTimeout(function () { pads[i].classList.remove("lit"); }, ms); }
     function show(g) {
       mode = "show"; swap(status, "Watch…");
@@ -850,7 +864,7 @@ footer { color: var(--muted); font-size: .875rem; padding-top: 1rem; }
       if (i === seq[idx]) {
         idx++;
         if (idx === seq.length) {
-          mode = "wait"; if (seq.length > hiScore) hiScore = seq.length;
+          mode = "wait"; if (seq.length > hiScore) { hiScore = seq.length; lsSet("simonBest", hiScore); }
           swap(status, "Round " + seq.length + " done · best " + hiScore); add();
         }
       } else {
@@ -915,6 +929,8 @@ footer { color: var(--muted); font-size: .875rem; padding-top: 1rem; }
   function initReaction() {
     var react = $("react"), rBig = $("rBig"), rSmall = $("rSmall"), rBest = $("rBest");
     var state = "idle", timer, start = 0, best = null;
+    var saved = parseInt(lsGet("reactBest"), 10);
+    if (saved > 0) { best = saved; rBest.textContent = "Best: " + best + " ms"; }
     function set(st, big, small) { state = st; react.setAttribute("data-state", st); swap(rBig, big); rSmall.textContent = small; }
     react.addEventListener("click", function () {
       if (state === "wait") {
@@ -922,14 +938,14 @@ footer { color: var(--muted); font-size: .875rem; padding-top: 1rem; }
       } else if (state === "go") {
         var ms = Math.round(performance.now() - start);
         set("done", ms + " ms", "Tap to go again");
-        if (best === null || ms < best) { best = ms; rBest.textContent = "Best: " + best + " ms"; }
+        if (best === null || ms < best) { best = ms; lsSet("reactBest", best); rBest.textContent = "Best: " + best + " ms"; }
       } else {
         set("wait", "Wait…", "Not yet");
         timer = setTimeout(function () { start = performance.now(); set("go", "Tap!", "Now"); }, 1200 + Math.random() * 2800);
       }
     });
     $("rReset").addEventListener("click", function () {
-      clearTimeout(timer); best = null; rBest.textContent = "Best: none yet"; set("idle", "Tap to start", "Wait for green");
+      clearTimeout(timer); best = null; lsSet("reactBest", 0); rBest.textContent = "Best: none yet"; set("idle", "Tap to start", "Wait for green");
     });
   }
 
@@ -938,7 +954,8 @@ footer { color: var(--muted); font-size: .875rem; padding-top: 1rem; }
     var track = document.querySelector(".shot .track"), zone = $("shZone"), marker = $("shMarker"), msg = $("shBig");
     var btn = $("shBtn"), stat = $("shStat");
     var run = false, t0 = 0, spd = 1.1, zl = 0.4, zw = 0.22, made = 0, tries = 0, p = 0.5, raf = 0;
-    function place(q) { marker.style.transform = "translate3d(" + (q * track.clientWidth).toFixed(1) + "px,0,0)"; }
+    var tw = track.clientWidth;   // cached; refreshed on layout, never read inside the animation loop
+    function place(q) { marker.style.transform = "translate3d(" + (q * tw).toFixed(1) + "px,0,0)"; }
     function pos() { return Math.abs((((performance.now() - t0) / 1000 * spd) % 2) - 1); }
     function newZone() {
       zw = Math.max(0.12, 0.22 - made * 0.01); zl = 0.08 + Math.random() * (0.84 - zw);
@@ -951,6 +968,7 @@ footer { color: var(--muted); font-size: .875rem; padding-top: 1rem; }
     btn.addEventListener("click", function () {
       if (!run) {
         if (tries > 0) newZone();
+        tw = track.clientWidth;
         run = true; t0 = performance.now(); swap(msg, "Tap again to shoot"); btn.textContent = "Shoot"; loop(); return;
       }
       run = false; cancelAnimationFrame(raf); p = pos(); place(p); tries++;
@@ -961,7 +979,7 @@ footer { color: var(--muted); font-size: .875rem; padding-top: 1rem; }
       run = false; cancelAnimationFrame(raf); made = 0; tries = 0; spd = 1.1; p = 0.5; place(p);
       swap(msg, "Ready?"); btn.textContent = "Start"; stat.textContent = "Made 0 of 0"; newZone();
     });
-    window.addEventListener("resize", function () { place(p); });
+    onLayout(function () { tw = track.clientWidth; place(p); });
     newZone(); place(p);
   }
 
@@ -969,11 +987,13 @@ footer { color: var(--muted); font-size: .875rem; padding-top: 1rem; }
   function initTap() {
     var b = $("tap"), big = $("tpBig"), small = $("tpSmall"), bestEl = $("tpBest");
     var state = "idle", taps = 0, end = 0, timer, best = null, lockUntil = 0;
+    var saved = parseInt(lsGet("tapBest"), 10);
+    if (saved > 0) { best = saved; bestEl.textContent = "Best: " + best + " taps"; }
     function set(st, bg, sm) { state = st; b.setAttribute("data-state", st); swap(big, bg); small.textContent = sm; }
     function finish() {
       clearInterval(timer); lockUntil = Date.now() + 700;
       set("done", taps + " taps", (taps / 10).toFixed(1) + " per second · tap to retry");
-      if (best === null || taps > best) { best = taps; bestEl.textContent = "Best: " + best + " taps"; }
+      if (best === null || taps > best) { best = taps; lsSet("tapBest", best); bestEl.textContent = "Best: " + best + " taps"; }
     }
     b.addEventListener("click", function () {
       var now = Date.now();
@@ -990,7 +1010,7 @@ footer { color: var(--muted); font-size: .875rem; padding-top: 1rem; }
       }, 100);
     });
     $("tpReset").addEventListener("click", function () {
-      clearInterval(timer); best = null; bestEl.textContent = "Best: none yet"; set("idle", "Tap to start", "Ten seconds, go fast");
+      clearInterval(timer); best = null; lsSet("tapBest", 0); bestEl.textContent = "Best: none yet"; set("idle", "Tap to start", "Ten seconds, go fast");
     });
   }
 
